@@ -10,7 +10,7 @@ global using RunAholicAPI.Repositories;
 global using RunAholicAPI.Services;
 
 // Validation
-// global using RunAholicAPI.Validation;
+global using RunAholicAPI.Validation;
 global using FluentValidation;
 global using FluentValidation.AspNetCore;
 

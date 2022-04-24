@@ -1,9 +1,14 @@
-version: '3.1'
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
 services:
-  api:
+  runaholicapi:
+    image: runaholicapi
     build:
       context: .
-    ports: 
+      dockerfile: ./Dockerfile
+    ports:
       - 3000:3000
     volumes:
       - ./appsettings.Docker.json:/app/appsettings.json
