@@ -5,77 +5,50 @@ public class Activity
     public string? ActivityId { get; set; }
     public string? Name { get; set; }
     public DateTime StartDateLocal { get; set; }
-    public int ElapsedTime { get; set; }
+    public int ElapsedTimeInSec { get; set; }
     public string? Description { get; set; }
-    public decimal DistanceInKM { get; set; }
+    public int DistanceInMeters { get; set; }
     public string? Tempo
     {
         get
             {
-                TimeSpan t = TimeSpan.FromSeconds(ElapsedTime);
-                return "uitwerken";
-            }    
+                // Verkregen seconden die in Elapsed_time zitten omzetten naar een string in formaat MM:SS
+                decimal seconds = ElapsedTimeInSec / (DistanceInMeters / 1000);
+                decimal minutes = seconds / 60;
+                decimal roundedMinutes = Math.Floor(minutes);
+                decimal rest = minutes - roundedMinutes;
+                seconds = rest * 60;
+
+                // afronden
+                seconds = Math.Round(seconds);
+                string secondsString = seconds.ToString();
+                if (secondsString.Length == 1)
+                {
+                    secondsString = "0" + secondsString;
+                }
+                return roundedMinutes.ToString() + ":" + secondsString + "/km";
+            }
     }
     public string? Pace 
     {
         get
             {
-                decimal kmh = DistanceInKM / ElapsedTime * 3600/1000;
+                decimal kmh = DistanceInMeters / ElapsedTimeInSec * 3600/1000;
                 decimal roundedKmh = Math.Round(kmh, 1);
                 return roundedKmh.ToString() + " km/h";
             }
     }
-    public string ElapsedTimeInMinAndSec
+    public string ElapsedTimeInHMS
     {
         get
         {
-            decimal minutes = ElapsedTime / 60;
-            if (minutes >= 60) // Er is meer dan een uur gelopen dus ik moet het formaat H:MM:SS weergeven
-            {
-                decimal hours = minutes / 60;
-                decimal roundedHours = Math.Floor(hours);
-                decimal restHours = hours - roundedHours;
-                decimal newMinutes = restHours * 60;
-
-                decimal roundedMinutes = Math.Floor(newMinutes);
-                decimal restMinutes = newMinutes - roundedMinutes;
-                decimal seconds = restMinutes * 60;
-                seconds = Math.Round(seconds, 0);
-
-                //omzetten naar string
-                string hoursString = roundedHours.ToString();
-                string roundedMinutesString = roundedMinutes.ToString();
-                string secondsString = seconds.ToString();
-
-                if (roundedMinutesString.Length == 1)
-                {
-                    roundedMinutesString = "0" + roundedMinutesString;
-                }
-
-                if (secondsString.Length == 1)
-                {
-                    secondsString = "0" + secondsString;
-                }
-                return hoursString + ":" + roundedMinutesString + ":" + secondsString;
-            }
-            else // Minder dan een uur --> MM:SS
-            {
-                decimal roundedMinutes = Math.Floor(minutes);
-                decimal rest = minutes - roundedMinutes;
-                decimal seconds = rest * 60;
-                seconds = Math.Round(seconds, 0);
-
-                //omzetten naar string
-                string roundedMinutesString = roundedMinutes.ToString();
-                string secondsString = seconds.ToString();
-
-                if (secondsString.Length == 1)
-                {
-                    secondsString = "0" + secondsString;
-                }
-                return roundedMinutesString + ":" + secondsString;
-            }
-        }
+            TimeSpan t = TimeSpan.FromSeconds(ElapsedTimeInSec);
+            string answer = string.Format("{0:D2}h:{1:D2}m:{2:D2}s",
+            t.Hours,  
+            t.Minutes, 
+            t.Seconds);
+            return answer;
+        }    
     }
     public string? AthleteId { get; set; }
 }

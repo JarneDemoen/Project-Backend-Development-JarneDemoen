@@ -1,6 +1,15 @@
 namespace RunAholicAPI.DataContext;
 
-public class MongoContext
+public interface IMongoContext
+{
+    IMongoClient Client { get; }
+    IMongoDatabase Database { get; }
+    IMongoCollection<Activity> ActivitiesCollection { get; }
+    IMongoCollection<Athlete> AthletesCollection { get; }
+    IMongoCollection<Stats> StatsCollection { get; }
+}
+
+public class MongoContext : IMongoContext
 {
     private readonly MongoClient _client;
     private readonly IMongoDatabase _database;
