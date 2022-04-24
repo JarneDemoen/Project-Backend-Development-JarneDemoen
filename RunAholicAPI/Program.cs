@@ -47,7 +47,7 @@ app.UseAuthorization();
 
 // app.MapGraphQL();
 app.MapGet("/", () => "Hello World!");
-app.MapPost("/activities",async (IValidator<Activity> validator, IRunAholicService runAholicService, Activity activity) =>
+app.MapPost("/activities",[Authorize] async (IValidator<Activity> validator, IRunAholicService runAholicService, Activity activity) =>
 {
     var validationResult = validator.Validate(activity);
     if (validationResult.IsValid)
@@ -63,7 +63,7 @@ app.MapPost("/activities",async (IValidator<Activity> validator, IRunAholicServi
     
 });
 
-app.MapPost("/authenticate", (IAuthenticationService authenticationService,string userName, string password, AuthenticationRequestBody authenticationRequestBody,IOptions<AuthSettings>authSettings) =>
+app.MapPost("/authenticate", (IAuthenticationService authenticationService,AuthenticationRequestBody authenticationRequestBody,IOptions<AuthSettings> authSettings,string userName, string password) =>
 {
     var user = authenticationService.ValidateUser(authenticationRequestBody.username, authenticationRequestBody.password);
     if (user == null)
