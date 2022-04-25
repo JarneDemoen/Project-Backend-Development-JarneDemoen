@@ -78,12 +78,13 @@ public class RunAholicService : IRunAholicService
         Stats currentStats = await _statsRepository.GetAthleteStats(athleteId);
         var statsId = currentStats.StatsId;
         await _statsRepository.DeleteStats(statsId);
+        await _activityRepository.DeleteActivities(athleteId);
     }
 
     // STATS
     public async Task<List<Stats>> GetAllStats() => await _statsRepository.GetAllStats();
     public async Task<Stats> GetAthleteStats(string athleteId) => await _statsRepository.GetAthleteStats(athleteId);
     public async Task<Stats> UpdateAthleteStats(Stats updatedStats) => await _statsRepository.UpdateAthleteStats(updatedStats);
-    
+
 }
 

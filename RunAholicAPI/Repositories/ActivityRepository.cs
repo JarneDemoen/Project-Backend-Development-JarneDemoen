@@ -8,6 +8,7 @@ public interface IActivityRepository
     Task<Activity> GetActivity(string id);
     Task<List<Activity>> GetAllActivities();
     Task<Activity> UpdateActivity(Activity activity);
+    Task DeleteActivities(string atlheteId);
 }
 
 public class ActivityRepository : IActivityRepository
@@ -94,6 +95,20 @@ public class ActivityRepository : IActivityRepository
         {
             var filter = Builders<Activity>.Filter.Eq("ActivityId", id);
             var result = await _context.ActivitiesCollection.DeleteOneAsync(filter);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    public async Task DeleteActivities(string atlheteId)
+    {
+        try
+        {
+            var filter = Builders<Activity>.Filter.Eq("AthleteId",atlheteId);
+            var result = await _context.ActivitiesCollection.DeleteManyAsync(filter);
         }
         catch (Exception ex)
         {
