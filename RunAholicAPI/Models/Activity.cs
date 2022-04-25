@@ -4,7 +4,7 @@ public class Activity
 {
     public string? ActivityId { get; set; }
     public string? Name { get; set; }
-    public DateTime StartDateLocal { get; set; }
+    public string? StartDateLocal { get; set; }
     public int ElapsedTimeInSec { get; set; }
     public string? Description { get; set; }
     public int DistanceInMeters { get; set; }

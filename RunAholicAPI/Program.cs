@@ -47,7 +47,7 @@ app.UseAuthorization();
 
 // app.MapGraphQL();
 app.MapGet("/", () => "Hello World!");
-app.MapPost("/activities",[Authorize] async (IValidator<Activity> validator, IRunAholicService runAholicService, Activity activity) =>
+app.MapPost("/activities",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Activity> validator, IRunAholicService runAholicService, Activity activity, ClaimsPrincipal user) =>
 {
     var validationResult = validator.Validate(activity);
     if (validationResult.IsValid)
@@ -63,7 +63,7 @@ app.MapPost("/activities",[Authorize] async (IValidator<Activity> validator, IRu
     
 });
 
-app.MapPost("/authenticate", (IAuthenticationService authenticationService,AuthenticationRequestBody authenticationRequestBody,IOptions<AuthSettings> authSettings,string userName, string password) =>
+app.MapPost("/authenticate", (IAuthenticationService authenticationService,AuthenticationRequestBody authenticationRequestBody,IOptions<AuthSettings> authSettings) =>
 {
     var user = authenticationService.ValidateUser(authenticationRequestBody.username, authenticationRequestBody.password);
     if (user == null)
@@ -77,7 +77,7 @@ app.MapPost("/authenticate", (IAuthenticationService authenticationService,Authe
 
     var claimsForToken = new List<Claim>();
     claimsForToken.Add(new Claim("sub", "1"));
-    claimsForToken.Add(new Claim("given_name", userName));
+    claimsForToken.Add(new Claim("given_name",authenticationRequestBody.username));
     claimsForToken.Add(new Claim("city", "Hooglede"));
 
     var jwtSecurityToken = new JwtSecurityToken(
@@ -95,5 +95,5 @@ app.MapPost("/authenticate", (IAuthenticationService authenticationService,Authe
 
 });
 
-app.Run("http://localhost:3000");
+app.Run("http://0.0.0.0:3000");
 // public partial class Program { }
