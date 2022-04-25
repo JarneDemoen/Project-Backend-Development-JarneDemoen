@@ -103,52 +103,52 @@ app.MapDelete("/activities/{activityId}",[Authorize(Policy ="MustBeFromHooglede"
 
 // ATHLETE
 
-// app.MapGet("/athletes",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user) =>
-// {
-//     return Results.Ok(await runAholicService.GetAllAthletes());
-// });
+app.MapGet("/athletes",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user) =>
+{
+    return Results.Ok(await runAholicService.GetAllAthletes());
+});
 
-// app.MapGet("/athletes/{athleteId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string athleteId) =>
-// {
-//     return Results.Ok(await runAholicService.GetAthlete(athleteId));
-// });
+app.MapGet("/athletes/{athleteId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string athleteId) =>
+{
+    return Results.Ok(await runAholicService.GetAthlete(athleteId));
+});
 
-// app.MapPost("/athletes",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Athlete> validator, IRunAholicService runAholicService, Athlete newAthlete, ClaimsPrincipal user) =>
-// {
-//     var validationResult = validator.Validate(newAthlete);
-//     if (validationResult.IsValid)
-//     {
-//         newAthlete = await runAholicService.AddAthlete(newAthlete);
-//         return Results.Created($"/athlete/{newAthlete.AthleteId}",newAthlete);
-//     }
-//     else
-//     {
-//         var errors = validationResult.Errors.Select(x => new{errors = x.ErrorMessage});
-//         return Results.BadRequest(errors);
-//     }
+app.MapPost("/athletes",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Athlete> validator, IRunAholicService runAholicService, Athlete newAthlete, ClaimsPrincipal user) =>
+{
+    var validationResult = validator.Validate(newAthlete);
+    if (validationResult.IsValid)
+    {
+        newAthlete = await runAholicService.AddAthlete(newAthlete);
+        return Results.Created($"/athlete/{newAthlete.AthleteId}",newAthlete);
+    }
+    else
+    {
+        var errors = validationResult.Errors.Select(x => new{errors = x.ErrorMessage});
+        return Results.BadRequest(errors);
+    }
     
-// });
+});
 
-// app.MapPut("/athletes/{athleteId}",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Athlete> validator, IRunAholicService runAholicService, Athlete updatedAthlete, ClaimsPrincipal user) =>
-// {
-//     var validationResult = validator.Validate(updatedAthlete);
-//     if (validationResult.IsValid)
-//     {
-//         updatedAthlete = await runAholicService.UpdateAthlete(updatedAthlete);
-//         return Results.Created($"/acthlete/{updatedAthlete.AthleteId}",updatedAthlete);
-//     }
-//     else
-//     {
-//         var errors = validationResult.Errors.Select(x => new{errors = x.ErrorMessage});
-//         return Results.BadRequest(errors);
-//     }
-// });
+app.MapPut("/athletes",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Athlete> validator, IRunAholicService runAholicService, Athlete updatedAthlete, ClaimsPrincipal user) =>
+{
+    var validationResult = validator.Validate(updatedAthlete);
+    if (validationResult.IsValid)
+    {
+        updatedAthlete = await runAholicService.UpdateAthlete(updatedAthlete);
+        return Results.Created($"/acthlete/{updatedAthlete.AthleteId}",updatedAthlete);
+    }
+    else
+    {
+        var errors = validationResult.Errors.Select(x => new{errors = x.ErrorMessage});
+        return Results.BadRequest(errors);
+    }
+});
 
-// app.MapDelete("/athletes/{athleteId}",[Authorize(Policy ="MustBeFromHooglede")] async (IRunAholicService runAholicService, string athleteId, ClaimsPrincipal user) =>
-// {
-//     await runAholicService.DeleteAthlete(athleteId);
-//     return Results.Accepted($"Athlete {athleteId} is deleted succesfully");
-// });
+app.MapDelete("/athletes/{athleteId}",[Authorize(Policy ="MustBeFromHooglede")] async (IRunAholicService runAholicService, string athleteId, ClaimsPrincipal user) =>
+{
+    await runAholicService.DeleteAthlete(athleteId);
+    return Results.Ok($"Athlete {athleteId} is deleted succesfully");
+});
 
 
 // AUTHORIZATION
