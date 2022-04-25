@@ -1,6 +1,15 @@
 namespace RunAholicAPI.Repositories;
 
-public class StatsRepository
+public interface IStatsRepository
+{
+    Task<List<Stats>> GetAllStats();
+    Task<Stats> GetAthleteStats(string athleteId);
+    Task<Stats> UpdateAthleteStats(Stats updatedStats);
+    Task<Stats> CreateDefaultStats(Stats defaultStats);
+    Task DeleteStats(string statsId);
+}
+
+public class StatsRepository : IStatsRepository
 {
     private readonly IMongoContext _context;
     public StatsRepository(IMongoContext context)
@@ -16,7 +25,7 @@ public class StatsRepository
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex)
+            Console.WriteLine(ex);
             throw;
         }
     }
@@ -38,12 +47,13 @@ public class StatsRepository
     {
         try
         {
-           var filter = Builders<Stats>.Filter.Eq("StatsId",updatedStats.StatsId);
-           var update = Builders<Stats>.Update
-           .Set("TotalDistanceInMeters",updatedStats.TotalDistanceInMeters)
-           .Set("TotalElapsedTimeInSec",updatedStats.TotalElapsedTimeInSec);
-           var result = await _context.StatsCollection.UpdateOneAsync(filter,update);
-           return await GetAthleteStats(updatedStats.StatsId);
+            var filter = Builders<Stats>.Filter.Eq("StatsId", updatedStats.StatsId);
+            var update = Builders<Stats>.Update
+            .Set("TotalDistanceInMeters", updatedStats.TotalDistanceInMeters)
+            .Set("TotalElapsedTimeInSec", updatedStats.TotalElapsedTimeInSec)
+            .Set("NumberOfActivities",updatedStats.NumberOfActivities);
+            var result = await _context.StatsCollection.UpdateOneAsync(filter, update);
+            return await GetAthleteStats(updatedStats.StatsId);
         }
         catch (Exception ex)
         {
@@ -51,4 +61,33 @@ public class StatsRepository
             throw;
         }
     }
+
+    public async Task<Stats> CreateDefaultStats(Stats defaultStats)
+    {
+        try
+        {
+            await _context.StatsCollection.InsertOneAsync(defaultStats);
+            return defaultStats;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    public async Task DeleteStats(string statsId)
+    {
+        try
+        {
+            var filter = Builders<Stats>.Filter.Eq("StatsId",statsId);
+            var result = await _context.StatsCollection.DeleteOneAsync(filter);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
 }

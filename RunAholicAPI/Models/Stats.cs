@@ -6,13 +6,13 @@ public class Stats
     [BsonRepresentation(BsonType.ObjectId)]
     public string? StatsId { get; set; }
     public decimal TotalDistanceInMeters { get; set; }
-    public int NumberOfActivities { get; set; } = 0;
-    public int TotalElapsedTimeInSec { get; set; }
+    public int NumberOfActivities { get; set; }
+    public decimal TotalElapsedTimeInSec { get; set; }
     public string? TotalElapsedTimeInHMS 
     { 
         get
             {
-                TimeSpan t = TimeSpan.FromSeconds(TotalElapsedTimeInSec);
+                TimeSpan t = TimeSpan.FromSeconds(Convert.ToInt32(TotalElapsedTimeInSec));
                 string answer = string.Format("{0:D2}h:{1:D2}m:{2:D2}s", 
                 t.Hours, 
                 t.Minutes, 
@@ -24,12 +24,17 @@ public class Stats
     {  
         get
             {
-                // Verkregen seconden die in Elapsed_time zitten omzetten naar een string in formaat (H:)MM:SS
-                decimal seconds = TotalElapsedTimeInSec / (TotalDistanceInMeters / 1000);
-                decimal minutes = seconds / 60;
-                decimal roundedMinutes = Math.Floor(minutes);
-                decimal rest = minutes - roundedMinutes;
-                seconds = rest * 60;
+                decimal seconds = 0; 
+                decimal roundedMinutes = 0;
+                if (TotalElapsedTimeInSec != 0)
+                {
+                    // Verkregen seconden die in Elapsed_time zitten omzetten naar een string in formaat (H:)MM:SS
+                    seconds = TotalElapsedTimeInSec / (TotalDistanceInMeters / 1000);
+                    decimal minutes = seconds / 60;
+                    roundedMinutes = Math.Floor(minutes);
+                    decimal rest = minutes - roundedMinutes;
+                    seconds = rest * 60;
+                }
 
                 // afronden
                 seconds = Math.Round(seconds);
@@ -45,9 +50,16 @@ public class Stats
     {
         get
             {
-                decimal kmh = TotalDistanceInMeters / TotalElapsedTimeInSec * 3600/1000;
-                decimal roundedKmh = Math.Round(kmh, 1);
-                return roundedKmh.ToString() + " km/h";
+                if (TotalDistanceInMeters != TotalElapsedTimeInSec && TotalElapsedTimeInSec != 0)
+                {
+                    decimal kmh = TotalDistanceInMeters / TotalElapsedTimeInSec * 3600/1000;
+                    decimal roundedKmh = Math.Round(kmh, 1);
+                    return roundedKmh.ToString() + " km/h";
+                }
+                else
+                {
+                    return "0 km/h";
+                }
             }
     }
     public string? AthleteId { get; set; }

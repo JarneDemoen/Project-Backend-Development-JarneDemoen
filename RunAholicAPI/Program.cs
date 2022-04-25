@@ -10,7 +10,7 @@ builder.Services.AddTransient<IMongoContext,MongoContext>();
 
 builder.Services.AddTransient<IActivityRepository,ActivityRepository>();
 builder.Services.AddTransient<IAthleteRepository,AthleteRepository>();
-// builder.Services.AddTransient<IStatsRepository,StatsRepository>();
+builder.Services.AddTransient<IStatsRepository,StatsRepository>();
 
 builder.Services.AddTransient<IRunAholicService,RunAholicService>();
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
@@ -148,6 +148,17 @@ app.MapDelete("/athletes/{athleteId}",[Authorize(Policy ="MustBeFromHooglede")] 
 {
     await runAholicService.DeleteAthlete(athleteId);
     return Results.Ok($"Athlete {athleteId} is deleted succesfully");
+});
+
+// Stats
+app.MapGet("/stats",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user) =>
+{
+    return Results.Ok(await runAholicService.GetAllStats());
+});
+
+app.MapGet("/stats/athlete/{athleteId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string athleteId) =>
+{
+    return Results.Ok(await runAholicService.GetAthleteStats(athleteId));
 });
 
 
