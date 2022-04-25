@@ -58,19 +58,19 @@ public class AthleteRepository : IAthleteRepository
         }
     }
 
-    public async Task<Athlete> UpdateAthlete(Athlete athlete)
+    public async Task<Athlete> UpdateAthlete(Athlete updatedAthlete)
     {
         try
         {
-            var filter = Builders<Athlete>.Filter.Eq("AthleteId", athlete.AthleteId);
+            var filter = Builders<Athlete>.Filter.Eq("AthleteId", updatedAthlete.AthleteId);
             var update = Builders<Athlete>.Update
-            .Set("FirstName", athlete.FirstName)
-            .Set("LastName", athlete.LastName)
-            .Set("City", athlete.City)
-            .Set("Country", athlete.Country)
-            .Set("Age", athlete.Age);
+            .Set("FirstName", updatedAthlete.FirstName)
+            .Set("LastName", updatedAthlete.LastName)
+            .Set("City", updatedAthlete.City)
+            .Set("Country", updatedAthlete.Country)
+            .Set("Age", updatedAthlete.Age);
             var result = await _context.AthletesCollection.UpdateOneAsync(filter, update);
-            return await GetAthlete(athlete.AthleteId);
+            return await GetAthlete(updatedAthlete.AthleteId);
         }
         catch (Exception ex)
         {

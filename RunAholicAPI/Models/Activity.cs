@@ -2,12 +2,14 @@ namespace RunAholicAPI.Models;
 
 public class Activity
 {
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
     public string? ActivityId { get; set; }
     public string? Name { get; set; }
     public string? StartDateLocal { get; set; }
-    public int ElapsedTimeInSec { get; set; }
+    public decimal ElapsedTimeInSec { get; set; }
     public string? Description { get; set; }
-    public int DistanceInMeters { get; set; }
+    public decimal DistanceInMeters { get; set; }
     public string? Tempo
     {
         get
@@ -42,7 +44,7 @@ public class Activity
     {
         get
         {
-            TimeSpan t = TimeSpan.FromSeconds(ElapsedTimeInSec);
+            TimeSpan t = TimeSpan.FromSeconds(Convert.ToInt32(ElapsedTimeInSec));
             string answer = string.Format("{0:D2}h:{1:D2}m:{2:D2}s",
             t.Hours,  
             t.Minutes, 

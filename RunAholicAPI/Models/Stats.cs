@@ -2,6 +2,8 @@ namespace RunAholicAPI.Models;
 
 public class Stats
 {
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
     public string? StatsId { get; set; }
     public decimal TotalDistanceInMeters { get; set; }
     public int NumberOfActivities { get; set; } = 0;
@@ -16,7 +18,7 @@ public class Stats
                 t.Minutes, 
                 t.Seconds);
                 return answer;
-            }    
+            }
     }
     public string? AverageTempo 
     {  

@@ -9,7 +9,7 @@ builder.Services.Configure<AuthSettings>(authSettings);
 builder.Services.AddTransient<IMongoContext,MongoContext>();
 
 builder.Services.AddTransient<IActivityRepository,ActivityRepository>();
-// builder.Services.AddTransient<IAthleteRepository,AthleteRepository>();
+builder.Services.AddTransient<IAthleteRepository,AthleteRepository>();
 // builder.Services.AddTransient<IStatsRepository,StatsRepository>();
 
 builder.Services.AddTransient<IRunAholicService,RunAholicService>();
@@ -47,13 +47,30 @@ app.UseAuthorization();
 
 // app.MapGraphQL();
 app.MapGet("/", () => "Hello World!");
-app.MapPost("/activities",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Activity> validator, IRunAholicService runAholicService, Activity activity, ClaimsPrincipal user) =>
+
+//ACTIVITIES
+app.MapGet("/activities",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user) =>
 {
-    var validationResult = validator.Validate(activity);
+    return Results.Ok(await runAholicService.GetAllActivities());
+});
+
+app.MapGet("/activities/{activityId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string activityId) =>
+{
+    return Results.Ok(await runAholicService.GetActivity(activityId));
+});
+
+app.MapGet("/activities/athlete/{athleteId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string athleteId) =>
+{
+    return Results.Ok(await runAholicService.GetActivitiesByAthleteId(athleteId));
+});
+
+app.MapPost("/activities",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Activity> validator, IRunAholicService runAholicService, Activity newActivity, ClaimsPrincipal user) =>
+{
+    var validationResult = validator.Validate(newActivity);
     if (validationResult.IsValid)
     {
-        activity = await runAholicService.AddActivity(activity);
-        return Results.Created($"/activity/{activity.ActivityId}",activity);
+        newActivity = await runAholicService.AddActivity(newActivity);
+        return Results.Created($"/activity/{newActivity.ActivityId}",newActivity);
     }
     else
     {
@@ -62,6 +79,79 @@ app.MapPost("/activities",[Authorize(Policy ="MustBeFromHooglede")] async (IVali
     }
     
 });
+
+app.MapPut("/activities",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Activity> validator, IRunAholicService runAholicService, Activity updatedActivity, ClaimsPrincipal user) =>
+{
+    var validationResult = validator.Validate(updatedActivity);
+    if (validationResult.IsValid)
+    {
+        updatedActivity = await runAholicService.UpdateActivity(updatedActivity);
+        return Results.Created($"/activity/{updatedActivity.ActivityId}",updatedActivity);
+    }
+    else
+    {
+        var errors = validationResult.Errors.Select(x => new{errors = x.ErrorMessage});
+        return Results.BadRequest(errors);
+    }
+});
+
+app.MapDelete("/activities/{activityId}",[Authorize(Policy ="MustBeFromHooglede")] async (IRunAholicService runAholicService, string activityId, ClaimsPrincipal user) =>
+{
+    await runAholicService.DeleteActivity(activityId);
+    return Results.Ok($"Activity {activityId} is deleted succesfully");
+});
+
+// ATHLETE
+
+// app.MapGet("/athletes",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user) =>
+// {
+//     return Results.Ok(await runAholicService.GetAllAthletes());
+// });
+
+// app.MapGet("/athletes/{athleteId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string athleteId) =>
+// {
+//     return Results.Ok(await runAholicService.GetAthlete(athleteId));
+// });
+
+// app.MapPost("/athletes",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Athlete> validator, IRunAholicService runAholicService, Athlete newAthlete, ClaimsPrincipal user) =>
+// {
+//     var validationResult = validator.Validate(newAthlete);
+//     if (validationResult.IsValid)
+//     {
+//         newAthlete = await runAholicService.AddAthlete(newAthlete);
+//         return Results.Created($"/athlete/{newAthlete.AthleteId}",newAthlete);
+//     }
+//     else
+//     {
+//         var errors = validationResult.Errors.Select(x => new{errors = x.ErrorMessage});
+//         return Results.BadRequest(errors);
+//     }
+    
+// });
+
+// app.MapPut("/athletes/{athleteId}",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Athlete> validator, IRunAholicService runAholicService, Athlete updatedAthlete, ClaimsPrincipal user) =>
+// {
+//     var validationResult = validator.Validate(updatedAthlete);
+//     if (validationResult.IsValid)
+//     {
+//         updatedAthlete = await runAholicService.UpdateAthlete(updatedAthlete);
+//         return Results.Created($"/acthlete/{updatedAthlete.AthleteId}",updatedAthlete);
+//     }
+//     else
+//     {
+//         var errors = validationResult.Errors.Select(x => new{errors = x.ErrorMessage});
+//         return Results.BadRequest(errors);
+//     }
+// });
+
+// app.MapDelete("/athletes/{athleteId}",[Authorize(Policy ="MustBeFromHooglede")] async (IRunAholicService runAholicService, string athleteId, ClaimsPrincipal user) =>
+// {
+//     await runAholicService.DeleteAthlete(athleteId);
+//     return Results.Accepted($"Athlete {athleteId} is deleted succesfully");
+// });
+
+
+// AUTHORIZATION
 
 app.MapPost("/authenticate", (IAuthenticationService authenticationService,AuthenticationRequestBody authenticationRequestBody,IOptions<AuthSettings> authSettings) =>
 {

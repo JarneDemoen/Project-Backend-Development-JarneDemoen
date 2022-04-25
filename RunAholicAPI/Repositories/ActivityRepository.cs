@@ -70,16 +70,16 @@ public class ActivityRepository : IActivityRepository
         }
     }
 
-    public async Task<Activity> UpdateActivity(Activity activity)
+    public async Task<Activity> UpdateActivity(Activity updatedActivity)
     {
         try
         {
-            var filter = Builders<Activity>.Filter.Eq("ActivityId", activity.ActivityId);
+            var filter = Builders<Activity>.Filter.Eq("ActivityId", updatedActivity.ActivityId);
             var update = Builders<Activity>.Update
-            .Set("Name", activity.Name)
-            .Set("Description", activity.Description);
+            .Set("Name", updatedActivity.Name)
+            .Set("Description", updatedActivity.Description);
             var result = await _context.ActivitiesCollection.UpdateOneAsync(filter, update);
-            return await GetActivity(activity.ActivityId);
+            return await GetActivity(updatedActivity.ActivityId);
         }
         catch (Exception ex)
         {
