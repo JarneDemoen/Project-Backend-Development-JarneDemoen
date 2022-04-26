@@ -237,7 +237,7 @@ app.MapDelete("/athletes/{athleteId}",[Authorize(Policy ="MustBeFromHooglede")] 
 {
     if (athleteId.Length != 24)
     {
-        return Results.BadRequest("Invalid athleteID");
+        return Results.BadRequest("Invalid athleteId");
     }
     var result = await runAholicService.GetAthlete(athleteId);
     if (result != null)
@@ -260,6 +260,10 @@ app.MapGet("/stats",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicSe
 
 app.MapGet("/stats/athlete/{athleteId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string athleteId) =>
 {
+    if (athleteId.Length != 24)
+    {
+        return Results.BadRequest("Invalid athleteId");
+    }
     var result = await runAholicService.GetAthlete(athleteId);
     if (result != null)
     {
