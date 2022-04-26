@@ -56,12 +56,36 @@ app.MapGet("/activities",[Authorize(Policy="MustBeFromHooglede")] async (IRunAho
 
 app.MapGet("/activities/{activityId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string activityId) =>
 {
-    return Results.Ok(await runAholicService.GetActivity(activityId));
+    if (activityId.Length != 24)
+    {
+        return Results.BadRequest("Invalid activityId");
+    }
+    var result = await runAholicService.GetActivity(activityId);
+    if (result != null)
+    {
+        return Results.Ok(result);
+    }
+    else
+    {
+        return Results.NotFound($"Activity {activityId} is not found");
+    }
 });
 
 app.MapGet("/activities/athlete/{athleteId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string athleteId) =>
 {
-    return Results.Ok(await runAholicService.GetActivitiesByAthleteId(athleteId));
+    if (athleteId.Length != 24)
+    {
+        return Results.BadRequest("Invalid athleteId");
+    }
+    var result = await runAholicService.GetAthlete(athleteId);
+    if (result != null)
+    {
+        return Results.Ok(await runAholicService.GetActivitiesByAthleteId(athleteId));
+    }
+    else
+    {
+        return Results.NotFound($"Athlete {athleteId} is not found");
+    }
 });
 
 app.MapPost("/activities",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Activity> validator, IRunAholicService runAholicService, Activity newActivity, ClaimsPrincipal user) =>
@@ -82,11 +106,39 @@ app.MapPost("/activities",[Authorize(Policy ="MustBeFromHooglede")] async (IVali
 
 app.MapPut("/activities",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Activity> validator, IRunAholicService runAholicService, Activity updatedActivity, ClaimsPrincipal user) =>
 {
+    if (updatedActivity.ActivityId.Length != 24)
+    {
+        return Results.BadRequest("Invalid activityId");
+    }
+    if (updatedActivity.AthleteId.Length != 24)
+    {
+        return Results.BadRequest("Invalid athleteId");
+    }
     var validationResult = validator.Validate(updatedActivity);
     if (validationResult.IsValid)
     {
-        updatedActivity = await runAholicService.UpdateActivity(updatedActivity);
-        return Results.Created($"/activity/{updatedActivity.ActivityId}",updatedActivity);
+        var result = await runAholicService.GetActivity(updatedActivity.ActivityId); 
+        var athlete = await runAholicService.GetAthlete(updatedActivity.AthleteId);
+        if (result != null && athlete != null)
+        {
+            await runAholicService.UpdateActivity(updatedActivity);
+            return Results.Created($"/activity/{updatedActivity.ActivityId}",updatedActivity);
+        }
+        else
+        {
+            if(result == null)
+            {
+                return Results.NotFound($"Activity {updatedActivity.ActivityId} is not found");
+            }
+            if (athlete == null)
+            {
+                return Results.NotFound($"Athlete {updatedActivity.AthleteId} is not found");
+            }
+            else
+            {
+                return Results.BadRequest($"Something went wrong");
+            }
+        }
     }
     else
     {
@@ -97,8 +149,21 @@ app.MapPut("/activities",[Authorize(Policy ="MustBeFromHooglede")] async (IValid
 
 app.MapDelete("/activities/{activityId}",[Authorize(Policy ="MustBeFromHooglede")] async (IRunAholicService runAholicService, string activityId, ClaimsPrincipal user) =>
 {
-    await runAholicService.DeleteActivity(activityId);
-    return Results.Ok($"Activity {activityId} is deleted succesfully");
+    if (activityId.Length != 24)
+    {
+        return Results.BadRequest("Invalid activityId");
+    }
+    var result = await runAholicService.GetActivity(activityId);
+    if (result != null)
+    {
+        await runAholicService.DeleteActivity(activityId);
+        return Results.Ok($"Activity {activityId} is deleted succesfully");
+    }
+    else
+    {
+        return Results.NotFound($"Activity {activityId} is not found");
+    }
+    
 });
 
 // ATHLETE
@@ -110,7 +175,19 @@ app.MapGet("/athletes",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholi
 
 app.MapGet("/athletes/{athleteId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string athleteId) =>
 {
-    return Results.Ok(await runAholicService.GetAthlete(athleteId));
+    if (athleteId.Length != 24)
+    {
+        return Results.BadRequest("Invalid athleteId");
+    }
+    var result = await runAholicService.GetAthlete(athleteId);
+    if (result != null)
+    {
+        return Results.Ok(result);
+    }
+    else
+    {
+        return Results.NotFound($"Athlete {athleteId} is not found");
+    }
 });
 
 app.MapPost("/athletes",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Athlete> validator, IRunAholicService runAholicService, Athlete newAthlete, ClaimsPrincipal user) =>
@@ -131,11 +208,23 @@ app.MapPost("/athletes",[Authorize(Policy ="MustBeFromHooglede")] async (IValida
 
 app.MapPut("/athletes",[Authorize(Policy ="MustBeFromHooglede")] async (IValidator<Athlete> validator, IRunAholicService runAholicService, Athlete updatedAthlete, ClaimsPrincipal user) =>
 {
+    if (updatedAthlete.AthleteId.Length != 24)
+    {
+        return Results.BadRequest("Invalid athleteId");
+    }
     var validationResult = validator.Validate(updatedAthlete);
     if (validationResult.IsValid)
     {
-        updatedAthlete = await runAholicService.UpdateAthlete(updatedAthlete);
-        return Results.Created($"/acthlete/{updatedAthlete.AthleteId}",updatedAthlete);
+        var result = await runAholicService.GetAthlete(updatedAthlete.AthleteId); 
+        if (result != null)
+        {
+            await runAholicService.UpdateAthlete(updatedAthlete);
+            return Results.Created($"/acthlete/{updatedAthlete.AthleteId}",updatedAthlete);
+        }
+        else
+        {
+            return Results.NotFound($"Athlete {updatedAthlete.AthleteId} is not found");
+        }
     }
     else
     {
@@ -146,8 +235,21 @@ app.MapPut("/athletes",[Authorize(Policy ="MustBeFromHooglede")] async (IValidat
 
 app.MapDelete("/athletes/{athleteId}",[Authorize(Policy ="MustBeFromHooglede")] async (IRunAholicService runAholicService, string athleteId, ClaimsPrincipal user) =>
 {
-    await runAholicService.DeleteAthlete(athleteId);
-    return Results.Ok($"Athlete {athleteId} is deleted succesfully");
+    if (athleteId.Length != 24)
+    {
+        return Results.BadRequest("Invalid athleteID");
+    }
+    var result = await runAholicService.GetAthlete(athleteId);
+    if (result != null)
+    {
+        await runAholicService.DeleteAthlete(athleteId);
+        return Results.Ok($"Athlete {athleteId} is deleted succesfully");
+    }
+    else
+    {
+        return Results.NotFound($"Athlete {athleteId} is not found");
+    }
+    
 });
 
 // Stats
@@ -158,7 +260,16 @@ app.MapGet("/stats",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicSe
 
 app.MapGet("/stats/athlete/{athleteId}",[Authorize(Policy="MustBeFromHooglede")] async (IRunAholicService runAholicService,ClaimsPrincipal user,string athleteId) =>
 {
-    return Results.Ok(await runAholicService.GetAthleteStats(athleteId));
+    var result = await runAholicService.GetAthlete(athleteId);
+    if (result != null)
+    {
+        return Results.Ok(await runAholicService.GetAthleteStats(athleteId));
+    }
+    else
+    {
+        return Results.NotFound($"Athlete {athleteId} is not found");
+    }
+    
 });
 
 
