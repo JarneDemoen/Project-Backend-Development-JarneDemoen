@@ -16,6 +16,9 @@ public interface IRunAholicService
     Task<Activity> UpdateActivity(Activity updatedActivity);
     Task<Athlete> UpdateAthlete(Athlete updatedAthlete);
     Task<Stats> UpdateAthleteStats(Stats updatedStats);
+    Task<Stats> CreateDefaultStats(Stats defaultStats);
+    Task DeleteStats(string statsId);
+    Task DeleteActivities(string athleteId);
 }
 
 public class RunAholicService : IRunAholicService
@@ -85,6 +88,10 @@ public class RunAholicService : IRunAholicService
     public async Task<List<Stats>> GetAllStats() => await _statsRepository.GetAllStats();
     public async Task<Stats> GetAthleteStats(string athleteId) => await _statsRepository.GetAthleteStats(athleteId);
     public async Task<Stats> UpdateAthleteStats(Stats updatedStats) => await _statsRepository.UpdateAthleteStats(updatedStats);
+
+    public async Task<Stats> CreateDefaultStats(Stats defaultStats) => await _statsRepository.CreateDefaultStats(defaultStats);
+    public async Task DeleteStats(string statsId) => await _statsRepository.DeleteStats(statsId);
+    public async Task DeleteActivities(string athleteId) => await _activityRepository.DeleteActivities(athleteId);
 
 }
 

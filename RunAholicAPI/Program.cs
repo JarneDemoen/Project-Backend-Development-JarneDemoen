@@ -14,11 +14,11 @@ builder.Services.AddTransient<IStatsRepository,StatsRepository>();
 
 builder.Services.AddTransient<IRunAholicService,RunAholicService>();
 builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
-// builder.Services
-//     .AddGraphQLServer()
-//     .AddQueryType<Queries>()
-//     .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
-//     .AddMutationType<Mutation>();
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType<QueriesRunAholic>()
+    .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
+    .AddMutationType<MutationsRunaholic>();
 
 builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ActivityValidator>());
 builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
@@ -41,11 +41,12 @@ builder.Services.AddAuthorization(options =>
     });
 });
 var app = builder.Build();
+app.MapGraphQL();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// app.MapGraphQL();
+
 app.MapGet("/", () => "Hello World!");
 
 //ACTIVITIES

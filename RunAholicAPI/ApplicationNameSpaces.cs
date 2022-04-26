@@ -8,6 +8,7 @@ global using RunAholicAPI.DataContext;
 global using RunAholicAPI.Models;
 global using RunAholicAPI.Repositories;
 global using RunAholicAPI.Services;
+global using RunAholicAPI.GraphQL;
 
 // Validation
 global using RunAholicAPI.Validation;
