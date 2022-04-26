@@ -13,11 +13,6 @@ public class MutationsRunaholic
             AthleteId = input.athleteId,
             Description = input.Description
         };
-        Stats currentStats = await runAholicService.GetAthleteStats(newActivity.AthleteId);
-        currentStats.NumberOfActivities += 1;
-        currentStats.TotalDistanceInMeters += newActivity.DistanceInMeters;
-        currentStats.TotalElapsedTimeInSec += newActivity.ElapsedTimeInSec;
-        await runAholicService.UpdateAthleteStats(currentStats);
         var created = await runAholicService.AddActivity(newActivity);
         return new AddActivityPayload(created);
     }
@@ -34,12 +29,6 @@ public class MutationsRunaholic
     }
     public async Task<string> DeleteActivity([Service]IRunAholicService runAholicService,DeleteActivityInput input) 
     {
-        Activity activity = await runAholicService.GetActivity(input.activityId);
-        Stats currentStats = await runAholicService.GetAthleteStats(activity.AthleteId);
-        currentStats.NumberOfActivities -= 1;
-        currentStats.TotalDistanceInMeters -= activity.DistanceInMeters;
-        currentStats.TotalElapsedTimeInSec -= activity.ElapsedTimeInSec;
-        await runAholicService.UpdateAthleteStats(currentStats);
         await runAholicService.DeleteActivity(input.activityId);
         return $"Delete van {input.activityId} is gelukt";
     }
@@ -56,12 +45,6 @@ public class MutationsRunaholic
             Age = input.age
         };
         var created = await runAholicService.AddAthlete(newAthlete);
-        Stats defaultStats = new Stats{
-            TotalDistanceInMeters=0,
-            NumberOfActivities = 0,
-            TotalElapsedTimeInSec = 0,
-            AthleteId = newAthlete.AthleteId};
-        await runAholicService.CreateDefaultStats(defaultStats);
         return new AddAthletePayload(created);
     }
     public async Task<UpdateAthletePayload> UpdateAthlete([Service]IRunAholicService runAholicService,UpdateAthleteInput input)
@@ -78,14 +61,7 @@ public class MutationsRunaholic
         var updated = await runAholicService.UpdateAthlete(updatedAthlete);
         return new UpdateAthletePayload(updated);
     }
-    public async Task DeleteAthlete([Service]IRunAholicService runAholicService,DeleteAthleteInput input) 
-    {
-        await runAholicService.DeleteAthlete(input.athleteId);
-        Stats currentStats = await runAholicService.GetAthleteStats(input.athleteId);
-        var statsId = currentStats.StatsId;
-        await runAholicService.DeleteStats(statsId);
-        await runAholicService.DeleteActivities(input.athleteId);
-    }
+    public async Task DeleteAthlete([Service]IRunAholicService runAholicService,DeleteAthleteInput input) => await runAholicService.DeleteAthlete(input.athleteId);
 
     // STATS
     // public async Task<Stats> UpdateAthleteStats([Service]IRunAholicService runAholicService,Stats updatedStats) => await runAholicService.UpdateAthleteStats(updatedStats);
