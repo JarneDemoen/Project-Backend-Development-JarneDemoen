@@ -2,39 +2,67 @@ namespace RunAholicAPI.GraphQL;
 
 public class MutationsRunaholic
 {
-    public async Task<Activity> AddActivity([Service]IRunAholicService runAholicService,Activity newActivity) 
+    public async Task<AddActivityPayload> AddActivity([Service]IRunAholicService runAholicService,AddActivityInput input) 
     {
+        var newActivity = new Activity()
+        {
+            Name = input.name,
+            StartDateLocal = input.StartDateLocal,
+            ElapsedTimeInSec = input.ElapsedTimeInSec,
+            DistanceInMeters = input.DistanceInMeters,
+            AthleteId = input.athleteId,
+            Description = input.Description
+        };
         Stats currentStats = await runAholicService.GetAthleteStats(newActivity.AthleteId);
         currentStats.NumberOfActivities += 1;
         currentStats.TotalDistanceInMeters += newActivity.DistanceInMeters;
         currentStats.TotalElapsedTimeInSec += newActivity.ElapsedTimeInSec;
         await runAholicService.UpdateAthleteStats(currentStats);
-        await runAholicService.AddActivity(newActivity);
-        return newActivity;
+        var created = await runAholicService.AddActivity(newActivity);
+        return new AddActivityPayload(created);
     }
-    public async Task<Activity> UpdateActivity([Service]IRunAholicService runAholicService,Activity updatedActivity) => await runAholicService.UpdateActivity(updatedActivity);
-    public async Task DeleteActivity([Service]IRunAholicService runAholicService,string activityId) 
+    public async Task<UpdateActivityPayload> UpdateActivity([Service]IRunAholicService runAholicService,UpdateActivityInput input)
     {
-        Activity activity = await runAholicService.GetActivity(activityId);
+        var updatedActivity = new Activity()
+        {
+            ActivityId = input.activityId,
+            Name = input.name,
+            Description = input.description
+        };
+        var updated = await runAholicService.UpdateActivity(updatedActivity);
+        return new UpdateActivityPayload(updated);
+    }
+    public async Task<string> DeleteActivity([Service]IRunAholicService runAholicService,DeleteActivityInput input) 
+    {
+        Activity activity = await runAholicService.GetActivity(input.activityId);
         Stats currentStats = await runAholicService.GetAthleteStats(activity.AthleteId);
         currentStats.NumberOfActivities -= 1;
         currentStats.TotalDistanceInMeters -= activity.DistanceInMeters;
         currentStats.TotalElapsedTimeInSec -= activity.ElapsedTimeInSec;
         await runAholicService.UpdateAthleteStats(currentStats);
-        await runAholicService.DeleteActivity(activityId);
+        await runAholicService.DeleteActivity(input.activityId);
+        return $"Delete van {input.activityId} is gelukt";
     }
 
     // ATHLETE
-    public async Task<Athlete> AddAthlete([Service]IRunAholicService runAholicService,Athlete newAthlete)
+    public async Task<AddAthletePayload> AddAthlete([Service]IRunAholicService runAholicService,AddAthleteInput input)
     {
-        newAthlete = await runAholicService.AddAthlete(newAthlete);
+        var newAthlete = new Athlete()
+        {
+            FirstName = input.firstName,
+            LastName = input.lastName,
+            City = input.city,
+            Country = input.country,
+            Age = input.age
+        };
+        var created = await runAholicService.AddAthlete(newAthlete);
         Stats defaultStats = new Stats{
             TotalDistanceInMeters=0,
             NumberOfActivities = 0,
             TotalElapsedTimeInSec = 0,
             AthleteId = newAthlete.AthleteId};
         await runAholicService.CreateDefaultStats(defaultStats);
-        return newAthlete;
+        return new AddAthletePayload(created);
     }
     public async Task<Athlete> UpdateAthlete([Service]IRunAholicService runAholicService,Athlete updatedAthlete) => await runAholicService.UpdateAthlete(updatedAthlete);
     public async Task DeleteAthlete([Service]IRunAholicService runAholicService,string athleteId) 
