@@ -61,8 +61,11 @@ public class MutationsRunaholic
         var updated = await runAholicService.UpdateAthlete(updatedAthlete);
         return new UpdateAthletePayload(updated);
     }
-    public async Task DeleteAthlete([Service]IRunAholicService runAholicService,DeleteAthleteInput input) => await runAholicService.DeleteAthlete(input.athleteId);
+    public async Task<string> DeleteAthlete([Service]IRunAholicService runAholicService,DeleteAthleteInput input)
+    {
+        await runAholicService.DeleteAthlete(input.athleteId);
+        return $"Delete van athlete {input.athleteId} is gelukt";
+    }
 
-    // STATS
-    // public async Task<Stats> UpdateAthleteStats([Service]IRunAholicService runAholicService,Stats updatedStats) => await runAholicService.UpdateAthleteStats(updatedStats);
 }
+    
