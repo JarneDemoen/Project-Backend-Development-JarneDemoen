@@ -313,4 +313,4 @@ app.MapPost("/authenticate", (IAuthenticationService authenticationService,Authe
 });
 
 app.Run("http://0.0.0.0:3000");
-// public partial class Program { }
+public partial class Program { }
