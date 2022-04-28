@@ -3,7 +3,7 @@ namespace RunAholicTest.IntegrationTesting;
 public class IntegrationTests
 {
     [Fact]
-    public async Task Should_Return_Activities()
+    public async Task Should_Return_Athletes()
     {
         var application = Helper.CreateApi();
         var client = application.CreateClient();

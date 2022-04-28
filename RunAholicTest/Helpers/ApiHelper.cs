@@ -26,6 +26,12 @@ public class Helper
                 services.Remove(descriptor);
                 var fakeStatsRepository = new ServiceDescriptor(typeof(IStatsRepository), typeof(FakeStatsRepository), ServiceLifetime.Transient);
                 services.Add(fakeStatsRepository);
+
+                // Service
+                descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IStatsRepository));
+                services.Remove(descriptor);
+                var fakeRunAholicService = new ServiceDescriptor(typeof(IRunAholicService), typeof(FakeRunAholicService), ServiceLifetime.Transient);
+                services.Add(fakeRunAholicService);
             });
         });
 

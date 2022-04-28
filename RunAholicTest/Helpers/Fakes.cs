@@ -5,7 +5,10 @@ public class FakeActivityRepository : IActivityRepository
     public static List<Activity> _activities = new List<Activity>();
     public Task<Activity> AddActivity(Activity newActivity)
     {
-        newActivity.ActivityId = Guid.NewGuid().ToString();
+        if(newActivity.ActivityId == null)
+        {
+            newActivity.ActivityId = Guid.NewGuid().ToString();
+        }
         _activities.Add(newActivity);
         return Task.FromResult(newActivity);
     }
@@ -58,7 +61,10 @@ public class FakeAthleteRepository : IAthleteRepository
     public static List<Athlete> _athletes = new List<Athlete>();
     public Task<Athlete> AddAthlete(Athlete newAthlete)
     {
-        newAthlete.AthleteId = Guid.NewGuid().ToString();
+        if(newAthlete.AthleteId == null)
+        {
+            newAthlete.AthleteId = Guid.NewGuid().ToString();
+        }
         _athletes.Add(newAthlete);
         return Task.FromResult(newAthlete);
     }
@@ -125,4 +131,5 @@ public class FakeStatsRepository : IStatsRepository
         _stats.Insert(indexOfStats,stats);
         return Task.FromResult(_stats[indexOfStats]);
     }
+
 }
