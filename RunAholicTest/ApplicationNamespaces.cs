@@ -11,6 +11,7 @@ global using System;
 global using System.Net;
 global using FluentAssertions;
 global using System.Net.Http.Headers;
+global using System.IO;
 
 // Local Test API
 global using RunAholicTest.Helpers;

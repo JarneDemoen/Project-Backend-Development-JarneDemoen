@@ -115,6 +115,12 @@ public class FakeStatsRepository : IStatsRepository
 
     public Task<List<Stats>> GetAllStats()
     {
+        // _stats.Add(new Stats{
+        //     TotalDistanceInMeters=0,
+        //     NumberOfActivities = 0,
+        //     TotalElapsedTimeInSec = 0,
+        //     AthleteId = "1"});
+        File.WriteAllText("repostats.txt",_stats.Count().ToString());
         return Task.FromResult(_stats);
     }
 
