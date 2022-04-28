@@ -15,6 +15,7 @@ global using FluentAssertions;
 global using RunAholicTest.Helpers;
 global using RunAholicTest.Fakes;
 global using RunAholicTest.IntegrationTesting;
+global using RunAholicTest.Service;
 
 // Local API
 global using RunAholicAPI.Configuration;
