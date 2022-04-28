@@ -11,6 +11,7 @@ public class FakeRunAholicService : IRunAholicService
         _activityRepository = activityRepository;
         _athleteRepository = athleteRepository;
         _statsRepository = statsRepository;
+        Setup();
     }
     public Task<Activity> AddActivity(Activity newActivity)
     {
@@ -176,6 +177,7 @@ public class FakeRunAholicService : IRunAholicService
             Description = "Run 2 wake up",
             AthleteId = "1"
         };
+        _activityRepository.AddActivity(actjarne1);
         Activity actjarne2 = new Activity()
         {
             Name = "Pre-Season Run",
@@ -185,6 +187,7 @@ public class FakeRunAholicService : IRunAholicService
             Description = "Run 2 wake up",
             AthleteId = "1"
         };
+        _activityRepository.AddActivity(actjarne2);
         Activity actjarne3 = new Activity()
         {
             Name = "Slow pace",
@@ -194,6 +197,7 @@ public class FakeRunAholicService : IRunAholicService
             Description = "Revalidation",
             AthleteId = "1"
         };
+        _activityRepository.AddActivity(actjarne3);
 
         Activity acttammin1 = new Activity()
         {
@@ -203,6 +207,7 @@ public class FakeRunAholicService : IRunAholicService
             DistanceInMeters = 4800,
             AthleteId = "2"
         };
+        _activityRepository.AddActivity(acttammin1);
         Activity acttammin2 = new Activity()
         {
             Name = "Slow pace",
@@ -212,6 +217,7 @@ public class FakeRunAholicService : IRunAholicService
             Description = "Taking it easy",
             AthleteId = "2"
         };
+        _activityRepository.AddActivity(acttammin2);
 
         Activity actbjorn1 = new Activity()
         {
@@ -222,6 +228,7 @@ public class FakeRunAholicService : IRunAholicService
             Description = "First run",
             AthleteId = "3"
         };
+        _activityRepository.AddActivity(actbjorn1);
         Activity actbjorn2 = new Activity()
         {
             Name = "Second Run @ Wallemote",
@@ -231,6 +238,7 @@ public class FakeRunAholicService : IRunAholicService
             Description = "Second run",
             AthleteId = "3"
         };
+        _activityRepository.AddActivity(actbjorn2);
         Activity actbjorn3 = new Activity()
         {
             Name = "Last Run @ Wallemote",
@@ -240,6 +248,7 @@ public class FakeRunAholicService : IRunAholicService
             Description = "Last run",
             AthleteId = "3"
         };
+        _activityRepository.AddActivity(actbjorn3);
 
         Activity actlindsay1 = new Activity()
         {
@@ -250,6 +259,7 @@ public class FakeRunAholicService : IRunAholicService
             Description = "First Start 2 run sessino",
             AthleteId = "4"
         };
+        _activityRepository.AddActivity(actlindsay1);
 
     }
 }

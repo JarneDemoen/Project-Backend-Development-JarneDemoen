@@ -10,6 +10,7 @@ global using Newtonsoft.Json;
 global using System;
 global using System.Net;
 global using FluentAssertions;
+global using System.Net.Http.Headers;
 
 // Local Test API
 global using RunAholicTest.Helpers;

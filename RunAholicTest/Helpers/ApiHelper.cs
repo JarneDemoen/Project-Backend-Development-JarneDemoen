@@ -1,7 +1,7 @@
 namespace RunAholicTest.Helpers;
 public class Helper
 {
-
+    public static string GenerateBearerToken() => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZ2l2ZW5fbmFtZSI6Imphcm5lZCIsImNpdHkiOiJIb29nbGVkZSIsIm5iZiI6MTY1MTEzNDA4MSwiZXhwIjoxNjUzODYxNjAwLCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDozMDAwIiwiYXVkIjoiUnVuQWhvbGljQVBJX3VzZXJzIn0.10ZvC37cgFn4oReACY0JRTyREfVtQTki10BMfpjHZ3c";
     public static WebApplicationFactory<Program> CreateApi()
     {
         var application = new WebApplicationFactory<Program>()
@@ -28,7 +28,7 @@ public class Helper
                 services.Add(fakeStatsRepository);
 
                 // Service
-                descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IStatsRepository));
+                descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IRunAholicService));
                 services.Remove(descriptor);
                 var fakeRunAholicService = new ServiceDescriptor(typeof(IRunAholicService), typeof(FakeRunAholicService), ServiceLifetime.Transient);
                 services.Add(fakeRunAholicService);
