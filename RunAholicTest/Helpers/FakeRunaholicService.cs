@@ -32,7 +32,7 @@ public class FakeRunAholicService : IRunAholicService
             NumberOfActivities = 0,
             TotalElapsedTimeInSec = 0,
             AthleteId = newAthlete.AthleteId};
-         _statsRepository.CreateDefaultStats(defaultStats);
+        CreateDefaultStats(defaultStats);
         return Task.FromResult(newAthlete);
     }
 
@@ -65,14 +65,13 @@ public class FakeRunAholicService : IRunAholicService
         {
             return Task.CompletedTask;
         }
-        var statsId = currentStats.StatsId;
-        _statsRepository.DeleteStats(statsId);
+        DeleteStats(athleteId);
         return Task.FromResult(_activityRepository.DeleteActivities(athleteId));
     }
 
-    public Task DeleteStats(string statsId)
+    public Task DeleteStats(string athleteId)
     {
-        return Task.FromResult( _statsRepository.DeleteStats(statsId));
+        return Task.FromResult( _statsRepository.DeleteStats(athleteId));
     }
 
     public Task<List<Activity>> GetActivitiesByAthleteId(string athleteId)

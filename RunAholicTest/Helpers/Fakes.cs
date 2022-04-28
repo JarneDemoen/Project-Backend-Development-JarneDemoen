@@ -52,7 +52,7 @@ public class FakeActivityRepository : IActivityRepository
     {
         var updatedActivity = GetActivity(activity.ActivityId).Result;
         int indexOfActivity = _activities.IndexOf(updatedActivity);
-        _activities.Insert(indexOfActivity,activity);
+        _activities[indexOfActivity] = activity;
         return Task.FromResult(_activities[indexOfActivity]);
     }
 }
@@ -91,7 +91,7 @@ public class FakeAthleteRepository : IAthleteRepository
     {
         var UpdatedAthlete = GetAthlete(athlete.AthleteId).Result;
         int indexOfAthlete = _athletes.IndexOf(UpdatedAthlete);
-        _athletes.Insert(indexOfAthlete,athlete);
+        _athletes[indexOfAthlete] = athlete;
         return Task.FromResult(_athletes[indexOfAthlete]);
     }
 }
@@ -106,9 +106,9 @@ public class FakeStatsRepository : IStatsRepository
         return Task.FromResult(defaultStats);
     }
 
-    public Task DeleteStats(string statsId)
+    public Task DeleteStats(string athleteId)
     {
-        var stats = _stats.Find(_ => _.StatsId == statsId);
+        var stats = _stats.Find(_ => _.AthleteId == athleteId);
         _stats.Remove(stats);
         return Task.CompletedTask;
     }
@@ -134,7 +134,7 @@ public class FakeStatsRepository : IStatsRepository
     {
         var UpdatedStats = GetAthleteStats(stats.AthleteId).Result;
         int indexOfStats = _stats.IndexOf(UpdatedStats);
-        _stats.Insert(indexOfStats,stats);
+        _stats[indexOfStats] = stats;
         return Task.FromResult(_stats[indexOfStats]);
     }
 

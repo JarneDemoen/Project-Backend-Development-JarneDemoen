@@ -13,7 +13,9 @@ public class IntegrationTests
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         var activities = await result.Content.ReadFromJsonAsync<List<Activity>>();
         Assert.NotNull(activities);
-        Assert.True(activities.Count > 0);
+        await File.WriteAllTextAsync("ActivitiesCount.txt", activities.Count().ToString());
+        Assert.True(activities.Count() > 0);
+        Assert.True(activities.Count() == 9);
     }
 
     [Fact]
@@ -27,17 +29,10 @@ public class IntegrationTests
         // resultAthletes.StatusCode.Should().Be(HttpStatusCode.OK);
         resultStats.StatusCode.Should().Be(HttpStatusCode.OK);
         var stats = await resultStats.Content.ReadFromJsonAsync<List<Stats>>();
-        using (TextWriter tw = new StreamWriter("Statsresult.txt"))
-    {
-            foreach (var item in stats)
-            {
-                tw.WriteLine(item);
-            }
-        }
         // var athletes = await resultAthletes.Content.ReadFromJsonAsync<List<Athlete>>();
         Assert.NotNull(stats);
         await File.WriteAllTextAsync("StatsCount.txt", stats.Count().ToString());
-        Assert.True(stats.Count() > 0);
+        Assert.True(stats.Count() == 4);
     }
 
     [Fact]
