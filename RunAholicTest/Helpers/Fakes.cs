@@ -9,19 +9,20 @@ public class FakeActivityRepository : IActivityRepository
         return Task.FromResult(newActivity);
     }
 
-    public Task DeleteActivities(string atlheteId)
+    public Task DeleteActivities(string athleteId)
     {
-        var activities = _activities.FindAll(_ => _.AthleteId == atlheteId);
+        var activities = GetActivitiesByAthleteId(athleteId).Result;
         foreach (Activity activity in activities)
         {
             _activities.Remove(activity);
         }
-        return Task.CompletedTask;;
+        return Task.CompletedTask;
+
     }
 
     public Task DeleteActivity(string activityId)
     {
-        var activity = _activities.Find(_ => _.ActivityId == activityId);
+        var activity = GetActivity(activityId).Result;
         _activities.Remove(activity);
         return Task.CompletedTask;
     }
@@ -45,8 +46,9 @@ public class FakeActivityRepository : IActivityRepository
 
     public Task<Activity> UpdateActivity(Activity activity)
     {
-        int indexOfActivity = _activities.IndexOf(_activities.Single(i => i.ActivityId == activity.ActivityId));
-        _activities[indexOfActivity] = activity;
+        var updatedActivity = GetActivity(activity.ActivityId).Result;
+        int indexOfActivity = _activities.IndexOf(updatedActivity);
+        _activities.Insert(indexOfActivity,activity);
         return Task.FromResult(_activities[indexOfActivity]);
     }
 }
@@ -61,7 +63,7 @@ public class FakeAthleteRepository : IAthleteRepository
 
     public Task DeleteAthlete(string athleteId)
     {
-        var athlete = _athletes.Find(_ => _.AthleteId == athleteId);
+        var athlete = GetAthlete(athleteId).Result;
         _athletes.Remove(athlete);
         return Task.CompletedTask;
     }
@@ -79,36 +81,45 @@ public class FakeAthleteRepository : IAthleteRepository
 
     public Task<Athlete> UpdateAthlete(Athlete athlete)
     {
-        int indexOfAthlete = _athletes.IndexOf(_athletes.Single(i => i.AthleteId == athlete.AthleteId));
-        _athletes[indexOfAthlete] = athlete;
+        var UpdatedAthlete = GetAthlete(athlete.AthleteId).Result;
+        int indexOfAthlete = _athletes.IndexOf(UpdatedAthlete);
+        _athletes.Insert(indexOfAthlete,athlete);
         return Task.FromResult(_athletes[indexOfAthlete]);
     }
 }
 
 public class FakeStatsRepository : IStatsRepository
 {
+    public static List<Stats> _stats = new List<Stats>();
     public Task<Stats> CreateDefaultStats(Stats defaultStats)
     {
-        throw new NotImplementedException();
+        _stats.Add(defaultStats);
+        return Task.FromResult(defaultStats);
     }
 
     public Task DeleteStats(string statsId)
     {
-        throw new NotImplementedException();
+        var stats = _stats.Find(_ => _.StatsId == statsId);
+        _stats.Remove(stats);
+        return Task.CompletedTask;
     }
 
     public Task<List<Stats>> GetAllStats()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(_stats);
     }
 
     public Task<Stats> GetAthleteStats(string athleteId)
     {
-        throw new NotImplementedException();
+        var stats = _stats.Find(_ => _.AthleteId == athleteId);
+        return Task.FromResult(stats);
     }
 
-    public Task<Stats> UpdateAthleteStats(Stats updatedStats)
+    public Task<Stats> UpdateAthleteStats(Stats stats)
     {
-        throw new NotImplementedException();
+        var UpdatedStats = GetAthleteStats(stats.AthleteId).Result;
+        int indexOfStats = _stats.IndexOf(UpdatedStats);
+        _stats.Insert(indexOfStats,stats);
+        return Task.FromResult(_stats[indexOfStats]);
     }
 }
