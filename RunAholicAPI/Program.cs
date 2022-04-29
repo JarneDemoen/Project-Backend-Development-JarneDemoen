@@ -315,6 +315,6 @@ app.MapPost("/authenticate", (IAuthenticationService authenticationService,Authe
 
 });
 
-app.Run("http://0.0.0.0:3000");
-// app.Run();
-// public partial class Program { }
+// app.Run("http://0.0.0.0:3000");
+app.Run();
+public partial class Program { }
