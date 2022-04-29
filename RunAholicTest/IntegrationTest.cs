@@ -4,7 +4,7 @@ public class IntegrationTests
 {
     
     [Fact]
-    public async Task Should_Return_Activities()
+    public async Task Return_Activities()
     {
         var application = Helper.CreateApi();
         var client = application.CreateClient();
@@ -19,7 +19,7 @@ public class IntegrationTests
     }
 
     [Fact]
-    public async Task Should_Return_Activity()
+    public async Task Return_Activity()
     {
         var application = Helper.CreateApi();
         var client = application.CreateClient();
@@ -28,11 +28,10 @@ public class IntegrationTests
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         var activity = await result.Content.ReadFromJsonAsync<Activity>();
         Assert.NotNull(activity);
-        Assert.True(activity.Name == "Pre-Season Run");
     }
 
     [Fact]
-    public async Task Should_Return_ActivitiesByAthlete()
+    public async Task Return_ActivitiesByAthlete()
     {
         var application = Helper.CreateApi();
         var client = application.CreateClient();
@@ -45,7 +44,7 @@ public class IntegrationTests
     }
 
     [Fact]
-    public async Task Should_Return_AddActivity()
+    public async Task Return_AddActivity()
     {
         var application = Helper.CreateApi();
         var client = application.CreateClient();
@@ -66,7 +65,7 @@ public class IntegrationTests
     }
 
     [Fact]
-    public async Task Should_Return_UpdateActivity()
+    public async Task Return_UpdateActivity()
     {
         var application = Helper.CreateApi();
         var client = application.CreateClient();
@@ -79,6 +78,7 @@ public class IntegrationTests
             StartDateLocal = "24/02/2022 11:19",
             ElapsedTimeInSec = 1760,
             DistanceInMeters = 4800,
+            Description = "Description aangepast",
             AthleteId = "6266df68f932ca11ff0e5e6b"
         };
 
@@ -87,7 +87,18 @@ public class IntegrationTests
     }
 
     [Fact]
-    public async Task Should_Return_Stats()
+    public async Task Return_DeleteActivity()
+    {
+        var application = Helper.CreateApi();
+        var client = application.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",Helper.GenerateBearerToken());
+        var result = await client.DeleteAsync("/activities/6266df68f932ca11ff0e5e64");
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+
+    [Fact]
+    public async Task Return_Stats()
     {
         var application = Helper.CreateApi();
         var client = application.CreateClient();
@@ -104,7 +115,19 @@ public class IntegrationTests
     }
 
     [Fact]
-    public async Task Should_Return_Athletes()
+    public async Task Return_StatsByAthleteId()
+    {
+        var application = Helper.CreateApi();
+        var client = application.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",Helper.GenerateBearerToken());
+        var resultStats = await client.GetAsync("/stats/athlete/6266df68f932ca11ff0e5e6c");
+        resultStats.StatusCode.Should().Be(HttpStatusCode.OK);
+        var stats = await resultStats.Content.ReadFromJsonAsync<Stats>();
+        Assert.NotNull(stats);
+    }
+
+    [Fact]
+    public async Task Return_Athletes()
     {
         var application = Helper.CreateApi();
         var client = application.CreateClient();
@@ -116,5 +139,69 @@ public class IntegrationTests
         Assert.True(athletes.Count() > 0);
         await File.WriteAllTextAsync("AthletesCount.txt", athletes.Count.ToString());
         Assert.True(athletes.Count() == 4);
+    }
+
+    [Fact]
+    public async Task Return_Athlete()
+    {
+        var application = Helper.CreateApi();
+        var client = application.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",Helper.GenerateBearerToken());
+        var result = await client.GetAsync("/athletes/6266df68f932ca11ff0e5e6c");
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        var athlete = await result.Content.ReadFromJsonAsync<Athlete>();
+        Assert.NotNull(athlete);
+    }
+
+    [Fact]
+    public async Task Return_AddAthlete()
+    {
+        var application = Helper.CreateApi();
+        var client = application.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",Helper.GenerateBearerToken());
+
+        Athlete athlete = new Athlete()
+        {
+            AthleteId = "6266df68f932ca23ff0e5e6b",
+            FirstName = "Integration",
+            LastName = "Test",
+            City = "Testcity",
+            Country = "Testcountry",
+            Age = 21
+        };
+
+        var result = await client.PostAsJsonAsync("/athletes",athlete);
+        result.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task Return_UpdateAthlete()
+    {
+        var application = Helper.CreateApi();
+        var client = application.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",Helper.GenerateBearerToken());
+
+        Athlete athlete = new Athlete()
+        {
+            AthleteId = "6266df68f932ca11ff0e5e6c",
+            FirstName = "Bjorn",
+            LastName = "Demoen",
+            City = "Izegem",
+            Age = 45,
+            Country = "Belgium"
+        };
+
+        var result = await client.PutAsJsonAsync("/athletes",athlete);
+        result.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task Return_DeleteAthlete()
+    {
+        var application = Helper.CreateApi();
+        var client = application.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",Helper.GenerateBearerToken());
+        var result = await client.DeleteAsync("/athletes/6266df68f932ca11ff0e5e6c");
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }
