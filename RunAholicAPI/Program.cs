@@ -6,6 +6,8 @@ builder.Services.Configure<DatabaseSettings>(mongoSettings);
 var authSettings = builder.Configuration.GetSection("AuthenticationSettings");
 builder.Services.Configure<AuthSettings>(authSettings);
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IMongoContext,MongoContext>();
 
 builder.Services.AddTransient<IActivityRepository,ActivityRepository>();
@@ -42,7 +44,8 @@ builder.Services.AddAuthorization(options =>
 });
 var app = builder.Build();
 app.MapGraphQL();
-
+app.MapSwagger();
+app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -312,6 +315,6 @@ app.MapPost("/authenticate", (IAuthenticationService authenticationService,Authe
 
 });
 
-// app.Run("http://0.0.0.0:3000");
-app.Run();
-public partial class Program { }
+app.Run("http://0.0.0.0:3000");
+// app.Run();
+// public partial class Program { }
