@@ -104,11 +104,8 @@ public class IntegrationTests
         var client = application.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",Helper.GenerateBearerToken());
         var resultStats = await client.GetAsync("/stats");
-        // var resultAthletes = await client.GetAsync("/athletes");
-        // resultAthletes.StatusCode.Should().Be(HttpStatusCode.OK);
         resultStats.StatusCode.Should().Be(HttpStatusCode.OK);
         var stats = await resultStats.Content.ReadFromJsonAsync<List<Stats>>();
-        // var athletes = await resultAthletes.Content.ReadFromJsonAsync<List<Athlete>>();
         Assert.NotNull(stats);
         await File.WriteAllTextAsync("StatsCount.txt", stats.Count().ToString());
         Assert.True(stats.Count() == 4);

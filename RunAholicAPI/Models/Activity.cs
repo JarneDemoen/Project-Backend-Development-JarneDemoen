@@ -28,7 +28,7 @@ public class Activity
                 {
                     secondsString = "0" + secondsString;
                 }
-                return roundedMinutes.ToString() + ":" + secondsString + "/km";
+                return roundedMinutes.ToString() + ":" + secondsString + " min/km";
             }
     }
     public string? Pace 
